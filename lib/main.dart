@@ -11,7 +11,7 @@ class WallpaperApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Wallpaper App',
+      title: 'AM Wallpapers',
       theme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
