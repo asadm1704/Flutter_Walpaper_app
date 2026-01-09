@@ -27,21 +27,28 @@ class _WallpaperDetailScreenState extends State<WallpaperDetailScreen> {
       // Use Large2x resolution for high-quality wallpaper
       final String wallpaperUrl = widget.photo.src.large2x;
 
-      final String filename = await Wallpaper.imageDownloadProgress(wallpaperUrl);
-      // Set as both home screen and lock screen
-      await Wallpaper.setBothWallpapers(
-        imagePath: filename,
-        goToHome: true,
-        goToLock: false,
-      );
+      // Download and set the wallpaper
+      String? result;
+      final stream = Wallpaper.imageDownloadProgress(wallpaperUrl);
+      await for (var data in stream) {
+        result = data;
+      }
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Wallpaper set successfully!'),
-            duration: Duration(seconds: 2),
-          ),
+      if (result != null) {
+        // Set as home screen wallpaper - correct API for wallpaper 1.1.4
+        await Wallpaper.homeScreen(
+          width: 1080,
+          height: 1920,
         );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Wallpaper set successfully!'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
